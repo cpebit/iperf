@@ -380,7 +380,12 @@ iperf_tcp_connect(struct iperf_test *test)
     int saved_errno;
     int rcvbuf_actual, sndbuf_actual;
 
+#if defined(__ANDROID__)
+    s = create_socket(test->settings->domain, SOCK_STREAM, test->bind_address, test->bind_dev, test->bind_port, test->server_hostname, test->server_port, &server_res, test->network);
+#else
     s = create_socket(test->settings->domain, SOCK_STREAM, test->bind_address, test->bind_dev, test->bind_port, test->server_hostname, test->server_port, &server_res);
+#endif
+
     if (s < 0) {
 	i_errno = IESTREAMCONNECT;
 	return -1;

@@ -83,6 +83,10 @@ typedef atomic_uint_fast64_t atomic_iperf_size_t;
 typedef unsigned int uint
 #endif // __vxworks or __VXWORKS__
 
+#if defined(__ANDROID__)
+#include <android/multinetwork.h>
+#endif
+
 struct iperf_interval_results
 {
     atomic_iperf_size_t bytes_transferred; /* bytes transferred in this interval */
@@ -410,6 +414,10 @@ struct iperf_test
     TAILQ_HEAD(iperf_textlisthead, iperf_textline) server_output_list;
 
     void *context;
+
+#if defined(__ANDROID__)
+    net_handle_t network;
+#endif
 };
 
 /* default settings */

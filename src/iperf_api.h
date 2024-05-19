@@ -220,6 +220,10 @@ void    iperf_set_on_test_finish_callback(struct iperf_test* ipt, void (*callbac
 void    iperf_set_on_event_callback(struct iperf_test *ipt, void (*callback)(struct iperf_test *, char *));
 void    iperf_set_context(struct iperf_test *ipt, void *);
 
+#if defined(__ANDROID__)
+void    iperf_set_network(struct iperf_test *ipt, net_handle_t network);
+#endif
+
 #if defined(HAVE_SSL)
 void    iperf_set_test_client_username(struct iperf_test *ipt, const char *client_username);
 void    iperf_set_test_client_password(struct iperf_test *ipt, const char *client_password);

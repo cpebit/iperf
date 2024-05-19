@@ -27,9 +27,18 @@
 #ifndef __NET_H
 #define __NET_H
 
+#if defined(__ANDROID__)
+#include <android/multinetwork.h>
+#endif
+
 int timeout_connect(int s, const struct sockaddr *name, socklen_t namelen, int timeout);
+#if defined(__ANDROID__)
+int create_socket(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, struct addrinfo **server_res_out, net_handle_t network);
+int netdial(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, int timeout, net_handle_t network);
+#else
 int create_socket(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, struct addrinfo **server_res_out);
 int netdial(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, int timeout);
+#endif
 int netannounce(int domain, int proto, const char *local, const char *bind_dev, int port);
 int Nread(int fd, char *buf, size_t count, int prot);
 int Nwrite(int fd, const char *buf, size_t count, int prot) /* __attribute__((hot)) */;

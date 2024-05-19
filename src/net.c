@@ -124,7 +124,11 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen,
 
 /* create a socket */
 int
+#if defined(__ANDROID__)
+create_socket(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, struct addrinfo **server_res_out, net_handle_t network)
+#else
 create_socket(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, struct addrinfo **server_res_out)
+#endif
 {
     struct addrinfo hints, *local_res = NULL, *server_res = NULL;
     int s, saved_errno;
@@ -156,6 +160,10 @@ create_socket(int domain, int proto, const char *local, const char *bind_dev, in
 	freeaddrinfo(server_res);
         return -1;
     }
+
+#if defined(__ANDROID__)
+    android_setsocknetwork(network, s);
+#endif
 
     if (bind_dev) {
 #if defined(HAVE_SO_BINDTODEVICE)
@@ -234,12 +242,20 @@ create_socket(int domain, int proto, const char *local, const char *bind_dev, in
 
 /* make connection to server */
 int
+#if defined(__ANDROID__)
+netdial(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, int timeout, net_handle_t network)
+#else
 netdial(int domain, int proto, const char *local, const char *bind_dev, int local_port, const char *server, int port, int timeout)
+#endif
 {
     struct addrinfo *server_res = NULL;
     int s, saved_errno;
 
+#if defined(__ANDROID__)
+    s = create_socket(domain, proto, local, bind_dev, local_port, server, port, &server_res, network);
+#else
     s = create_socket(domain, proto, local, bind_dev, local_port, server, port, &server_res);
+#endif
     if (s < 0) {
       return -1;
     }

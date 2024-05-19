@@ -856,6 +856,14 @@ iperf_set_context(struct iperf_test *ipt, void *context)
     ipt->context = context;
 }
 
+#if defined(__ANDROID__)
+void
+iperf_set_network(struct iperf_test *ipt, net_handle_t network)
+{
+    ipt->network = network;
+}
+#endif
+
 /********************** Get/set test protocol structure ***********************/
 
 struct protocol *
