@@ -217,6 +217,8 @@ void    iperf_set_on_new_stream_callback(struct iperf_test* ipt, void (*callback
 void    iperf_set_on_test_start_callback(struct iperf_test* ipt, void (*callback)());
 void    iperf_set_on_test_connect_callback(struct iperf_test* ipt, void (*callback)());
 void    iperf_set_on_test_finish_callback(struct iperf_test* ipt, void (*callback)());
+void    iperf_set_on_event_callback(struct iperf_test *ipt, void (*callback)(struct iperf_test *, char *));
+void    iperf_set_context(struct iperf_test *ipt, void *);
 
 #if defined(HAVE_SSL)
 void    iperf_set_test_client_username(struct iperf_test *ipt, const char *client_username);
@@ -346,6 +348,7 @@ void iperf_on_new_stream(struct iperf_stream *);
 void iperf_on_test_start(struct iperf_test *);
 void iperf_on_connect(struct iperf_test *);
 void iperf_on_test_finish(struct iperf_test *);
+void iperf_on_event(struct iperf_test *test, char *str);
 
 extern jmp_buf env;
 

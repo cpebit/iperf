@@ -622,6 +622,12 @@ iperf_set_on_test_finish_callback(struct iperf_test* ipt, void (*callback)())
         ipt->on_test_finish = callback;
 }
 
+void
+iperf_set_on_event_callback(struct iperf_test *ipt, void (*callback)(struct iperf_test *, char *))
+{
+        ipt->on_event = callback;
+}
+
 static void
 check_sender_has_retransmits(struct iperf_test *ipt)
 {
@@ -844,6 +850,12 @@ iperf_set_test_mss(struct iperf_test *ipt, int mss)
     ipt->settings->mss = mss;
 }
 
+void
+iperf_set_context(struct iperf_test *ipt, void *context)
+{
+    ipt->context = context;
+}
+
 /********************** Get/set test protocol structure ***********************/
 
 struct protocol *
@@ -1007,6 +1019,11 @@ iperf_on_connect(struct iperf_test *test)
 
 void
 iperf_on_test_finish(struct iperf_test *test)
+{
+}
+
+void
+iperf_on_event(struct iperf_test *test, char *str)
 {
 }
 
@@ -2776,6 +2793,7 @@ JSONStream_Output(struct iperf_test * test, const char * event_name, cJSON * obj
     char *str = cJSON_PrintUnformatted(event);
     if (str == NULL)
         return -1;
+    test->on_event(test, str);
     if (pthread_mutex_lock(&(test->print_mutex)) != 0) {
         perror("iperf_json_finish: pthread_mutex_lock");
     }
@@ -3036,8 +3054,11 @@ iperf_defaults(struct iperf_test *testp)
     testp->on_test_start = iperf_on_test_start;
     testp->on_connect = iperf_on_connect;
     testp->on_test_finish = iperf_on_test_finish;
+    testp->on_event = iperf_on_event;
 
     TAILQ_INIT(&testp->server_output_list);
+
+    testp->context = NULL;
 
     return 0;
 }
